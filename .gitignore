@@ -33,6 +33,7 @@ build/
 ### Docker ###
 docker-compose-dev.yml
 Dockerfile.dev
+.env
 
 
 ### VS Code ###

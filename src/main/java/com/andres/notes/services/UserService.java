@@ -49,15 +49,13 @@ public class UserService {
 
 
     public void createUser(UserEntity user){
-        if(userRepository.countByRoleName("Admin")==0){
-            user.setRole(rolService.findRoleByName("user"));
+        if(userRepository.countByRoleName("admin")==0){
+            user.setRole(rolService.findRoleByName("admin"));
         }else{
             if(userRepository.existsByEmail(user.getEmail()))
                 throw  new EntityAlreadyExistsException("User already exist with email " + user.getEmail());
         }
         userRepository.save(user);
-
-
     }
 
     public AuthResponse login(LoginDto request){

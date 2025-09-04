@@ -6,7 +6,6 @@ import com.andres.notes.dto.NoteRequestDto;
 import com.andres.notes.exceptions.EntityAlreadyExistsException;
 import com.andres.notes.exceptions.EntityNotFoundException;
 import com.andres.notes.exceptions.UserMismatchException;
-import com.andres.notes.persistence.entity.CategoryEntity;
 import com.andres.notes.persistence.entity.NoteEntity;
 import com.andres.notes.persistence.entity.UserEntity;
 import com.andres.notes.persistence.repository.NoteRepository;

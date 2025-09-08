@@ -9,12 +9,15 @@ import com.andres.notes.exceptions.InvalidPasswordException;
 import com.andres.notes.exceptions.SamePasswordException;
 import com.andres.notes.persistence.entity.UserEntity;
 import com.andres.notes.persistence.repository.UserRepository;
+import com.andres.notes.util.PasswordValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +32,11 @@ public class UserService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
+    private final CodeActivationService codeActivationService;
+    private final MailClientService mailClientService;
 
+    @Value("${app.frontend-activation-url}")
+    private String activationUrl;
 
     public List<UserDto> getUsers(){
         List<UserEntity> users = userRepository.findAll();
@@ -48,9 +55,15 @@ public class UserService {
     }
 
 
+    @Transactional
     public void createUser(UserEntity user){
         if (userRepository.existsByEmail(user.getEmail()))
             throw new EntityAlreadyExistsException("User already exist with email " + user.getEmail());
+
+        if (!PasswordValidator.isValid(user.getPassword())) {
+            System.out.println("Password failed validation: " + user.getPassword());
+            throw new IllegalArgumentException("Password does not meet security requirements.");
+        }
 
         if (userRepository.countByRoleName("admin") == 0) {
             user.setRole(rolService.findRoleByName("admin"));
@@ -58,13 +71,27 @@ public class UserService {
             user.setRole(rolService.findRoleByName("user"));
         }
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+        userRepository.flush();
+
+        CodeActivationDto newCode = codeActivationService.createCodeActivation(user.getEmail());
+
+        mailClientService.sendMail(
+                user.getEmail(),
+                user.getName(),
+                MailClientService.buildActivationTemplate("Account activation ", newCode.getCode(), activationUrl+user.getEmail())
+        );
+        System.out.println(newCode);
     }
 
-    public AuthResponse login(LoginDto request){
-    Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(),request.getPassword()));
-    UserEntity user = (UserEntity) authentication.getPrincipal();
-    String token = jwtService.getToken(user);
+    public AuthResponse login(LoginDto request) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        UserEntity user = (UserEntity) authentication.getPrincipal();
+        String token = jwtService.getToken(user);
+
+    if(!user.isActive()) throw new IllegalStateException("User isn't active");
+
     return AuthResponse.builder()
                 .token(token)
             .user(toDto(user))
@@ -92,6 +119,11 @@ public class UserService {
         userRepository.delete(findUserById(id));
     }
 
+    public void changeStatus(String email){
+        UserEntity findUser = findUserByEmail(email);
+        findUser.changeStatus();
+        userRepository.save(findUser);
+    }
     public void updateUser(UserRequestDto user, Long id){
         UserEntity findUser = findUserById(id);
 

@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(SamePasswordException.class)
     public ResponseEntity<MessageResponse> handlerSamePasswordException(SamePasswordException ex){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(MessageResponse.builder()
                         .message(ex.getMessage())
                         .build());
@@ -36,7 +36,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserMismatchException.class)
     public ResponseEntity<MessageResponse> handlerUserMismatchException(UserMismatchException ex){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(MessageResponse.builder()
+                        .message(ex.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler(MailServiceException.class)
+    public ResponseEntity<MessageResponse> handlerMailServiceException(MailServiceException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(MessageResponse.builder()
                         .message(ex.getMessage())
                         .build());
@@ -44,7 +52,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidPasswordException.class)
     public ResponseEntity<MessageResponse> handlerInvalidPasswordException(InvalidPasswordException ex){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(MessageResponse.builder()
                         .message(ex.getMessage())
                         .build());

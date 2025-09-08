@@ -1,14 +1,11 @@
 package com.andres.notes.controllers;
 
 import com.andres.notes.dto.*;
-import com.andres.notes.persistence.entity.RoleEntity;
 import com.andres.notes.persistence.entity.UserEntity;
-import com.andres.notes.services.RolService;
-import com.andres.notes.services.UserService;
+import com.andres.notes.services.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -20,16 +17,19 @@ import java.security.Principal;
 public class AuthController {
 
 
-    private final RolService rolService;
-    private final PasswordEncoder passwordEncoder;
+
     private final UserService userService;
+    private final ResetPasswordService resetPasswordService;
+    private final CodeActivationService codeActivationService;
+    private final MailClientService mailClientService;
+
 
     @PostMapping("/register")
     public ResponseEntity<MessageResponse> register(@RequestBody RegisterDto user){
 
         UserEntity newUser  = UserEntity.builder()
                 .name(user.getName())
-                .password(passwordEncoder.encode(user.getPassword()))
+                .password(user.getPassword())
                 .email(user.getEmail())
                 .build();
 
@@ -55,4 +55,37 @@ public class AuthController {
                         .build()
         );
     }
+
+
+    @PostMapping("reset-password")
+    public ResponseEntity<MessageResponse> resetPassword(@RequestParam String email){
+        TokenNewPasswordDto token = resetPasswordService.createPasswordReset(email);
+        if(token == null ) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok().body(MessageResponse.builder().data(token).build());
+    }
+
+
+    @PostMapping("confirm-reset-password")
+    public ResponseEntity<MessageResponse> confirmResetPassword(@RequestParam String token, @RequestBody ResetPasswordDto request){
+        boolean success = resetPasswordService.resetPassword(
+                token,
+                request.getNewPassword()
+        );
+
+        if(!success) return ResponseEntity.badRequest().body(MessageResponse.builder().message("Incorrect or expired code").build());
+
+        return ResponseEntity.ok().body(MessageResponse.builder().message("Password successful updated").build());
+    }
+
+
+    @PostMapping("activate-account")
+    public ResponseEntity<MessageResponse> useCodeActivation(@RequestParam String email, @RequestBody UseCodeActivationDto codeActivation){
+        boolean code = codeActivationService.activeAccount(codeActivation.getCode(), email);
+        if(!code) return ResponseEntity.ok().body(MessageResponse.builder().message("Cant activate user").build());
+
+        return ResponseEntity.ok().body(MessageResponse.builder().message("User activated").build());
+    }
+
+
+
 }

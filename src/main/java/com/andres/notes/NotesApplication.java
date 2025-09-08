@@ -7,7 +7,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 @SpringBootApplication
 @EnableMethodSecurity
 public class NotesApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(NotesApplication.class, args);
 	}

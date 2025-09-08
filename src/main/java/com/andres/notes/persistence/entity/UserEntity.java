@@ -26,6 +26,12 @@ public class UserEntity implements UserDetails {
     private String name;
     private String password;
 
+    private boolean active = false;
+
+    public void changeStatus(){
+        active = !active;
+    }
+
     @Column(unique = true, nullable = false)
     private String email;
 

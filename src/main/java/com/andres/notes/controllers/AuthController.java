@@ -61,7 +61,7 @@ public class AuthController {
     public ResponseEntity<MessageResponse> resetPassword(@RequestParam String email){
         TokenNewPasswordDto token = resetPasswordService.createPasswordReset(email);
         if(token == null ) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok().body(MessageResponse.builder().data(token).build());
+        return ResponseEntity.ok().body(MessageResponse.builder().message("Token successful created").build());
     }
 
 

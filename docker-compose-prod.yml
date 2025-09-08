@@ -13,7 +13,8 @@ services:
       - DB_PASS=${DB_PASS}
       - MAIL_SERVICE=${MAIL_SERVICE}
       - MAIL_SECRET_KEY=${MAIL_SECRET_KEY}
-    depends_on:
+      - VALIDATION_FRONTEND=${VALIDATION_FRONTEND}
+      - CHANGE_PASSWORD_FRONTEND=${CHANGE_PASSWORD_FRONTEND}
       - mysql
     networks:
       - backend

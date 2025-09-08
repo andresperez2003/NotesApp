@@ -56,7 +56,7 @@ public class ResetPasswordService {
         resetPasswordRepository.save(resetPassword);
         resetPasswordRepository.flush();
 
-        mailClientService.sendMail(user.get().getEmail(),"Reset Password",
+        mailClientService.sendMail(user.get().getEmail(),"Cambio de contraseña en NoteApp ",
                 MailClientService.buildResetPasswordTemplate(user.get().getName(), resetPasswordUrl+resetPassword.getToken() )
                 );
 

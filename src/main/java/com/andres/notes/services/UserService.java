@@ -79,8 +79,8 @@ public class UserService {
 
         mailClientService.sendMail(
                 user.getEmail(),
-                user.getName(),
-                MailClientService.buildActivationTemplate("Account activation ", newCode.getCode(), activationUrl+user.getEmail())
+                "Activacion de cuenta en NotessApp",
+                MailClientService.buildActivationTemplate(user.getName(), newCode.getCode(), activationUrl+user.getEmail())
         );
         System.out.println(newCode);
     }

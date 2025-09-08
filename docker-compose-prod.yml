@@ -13,6 +13,8 @@ services:
       - DB_PASS=${DB_PASS}
     depends_on:
       - mysql
+    networks:
+      - backend
 
   mysql:
     image: mysql:8
@@ -23,6 +25,12 @@ services:
       - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - backend
 
 volumes:
   db_data:
+
+networks:
+  backend:
+    external: true

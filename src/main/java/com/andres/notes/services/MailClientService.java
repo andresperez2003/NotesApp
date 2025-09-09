@@ -108,7 +108,7 @@ public class MailClientService {
         </td>
       </tr>
     </table>
-    """, name, code, activationLink);
+    """, name, code);
     }
 
 

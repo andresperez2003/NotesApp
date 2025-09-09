@@ -80,7 +80,7 @@ public class MailClientService {
     }
 
 
-    public static String buildActivationTemplate(String name, String code, String activationLink) {
+    public static String buildActivationTemplate(String name, String code) {
         return String.format("""
     <table width="100%%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f2f4f7;padding:20px 0;font-family:Arial,Helvetica,sans-serif;">
       <tr>
@@ -98,12 +98,6 @@ public class MailClientService {
                 <p style="margin:0 0 10px;">Your activation code is:</p>
                 <p style="margin:0 0 20px;font-size:20px;letter-spacing:4px;font-weight:bold;text-align:center;">
                   %s
-                </p>
-                <p style="margin:0 0 10px;">activate your account here:</p>
-                <p style="text-align:center;margin:0 0 20px;">
-                  <a href="%s" style="display:inline-block;padding:10px 18px;background:#4f46e5;color:#ffffff;text-decoration:none;font-weight:bold;">
-                    Activate my account
-                  </a>
                 </p>
                 <p style="margin:15px 0 0;font-size:12px;color:#888888;">
                   If you didn’t request this email, just ignore it.

@@ -39,7 +39,7 @@ public class CategoryService {
                 .name(category.getName())
                 .user(user)
                 .build();
-        if(categoryRepository.existsByName(category.getName())){
+        if(categoryRepository.existsByNameAndUser(category.getName(), user)){
             throw new EntityAlreadyExistsException("Category with name " + category.getName() + " already exists");
         }
 

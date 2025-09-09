@@ -54,7 +54,7 @@ public class NoteService {
 
     public void createNotes(NoteEntity note, String email){
         UserEntity user = userService.getUserByEmail(email);
-        if(noteRepository.existsByName(note.getName())){
+        if(noteRepository.existsByNameAndUser(note.getName(), user)){
             throw  new EntityAlreadyExistsException("Note with name " + note.getName()+ " already exists");
         }
         note.setUser(user);

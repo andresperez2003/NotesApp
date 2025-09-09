@@ -81,7 +81,7 @@ public class NoteService {
             findNote.setName(note.getName());
         }
         if(note.getDescription() != null){
-            findNote.setName(note.getDescription());
+            findNote.setDescription(note.getDescription());
         }
         if(note.getCategory()!= null){
             findNote.setCategory(categoryService.findCategoryById(note.getCategory()));

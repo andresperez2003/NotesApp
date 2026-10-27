@@ -32,10 +32,10 @@ public class CategoryController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<MessageResponse> getCategoryById(@PathVariable Long id){
+    public ResponseEntity<MessageResponse> getCategoryById(@PathVariable Long id, Principal principal){
         return ResponseEntity.status(HttpStatus.OK).body(
                 MessageResponse.builder()
-                        .data(categoryService.findCategoryById(id))
+                        .data(categoryService.findCategoryByIdAndUser(id, principal.getName()))
                         .build()
         );
     }

@@ -84,7 +84,7 @@ public class NoteService {
             findNote.setDescription(note.getDescription());
         }
         if(note.getCategory()!= null){
-            findNote.setCategory(categoryService.findCategoryById(note.getCategory()));
+            findNote.setCategory(categoryService.findCategoryByIdAndUser(note.getCategory(), email));
         }
         if(note.getCategory()!= null){
             findNote.setUser(userService.findUserByEmail(email));

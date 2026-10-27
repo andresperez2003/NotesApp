@@ -64,6 +64,7 @@ public class RolController {
 
 
     // Solo puede acceder el admin
+    @PreAuthorize("hasRole('admin')")
     @DeleteMapping("/{id}")
     public ResponseEntity<MessageResponse> deleteRole(@PathVariable Long id){
         rolService.deleteRol(id);

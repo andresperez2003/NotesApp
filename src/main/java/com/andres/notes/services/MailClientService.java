@@ -27,6 +27,17 @@ public class MailClientService {
 
 
     public void sendMail(String to, String subjet, String text) {
+        // Sin servicio de correo configurado (desarrollo local): solo se muestra en consola
+        if (mailServiceUrl == null || mailServiceUrl.isBlank()) {
+            System.out.println("[MAIL SIMULADO] Para: " + to + " | Asunto: " + subjet);
+            System.out.println("[MAIL SIMULADO] " + text
+                    .replaceAll("(?s)<style.*?</style>", " ")
+                    .replaceAll("<[^>]*>", " ")
+                    .replaceAll("\\s+", " ")
+                    .trim());
+            return;
+        }
+
         try{
             Map<String, String> bodyMap = new TreeMap<>();
             bodyMap.put("to",to);

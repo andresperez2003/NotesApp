@@ -59,9 +59,9 @@ public class AuthController {
 
     @PostMapping("reset-password")
     public ResponseEntity<MessageResponse> resetPassword(@RequestParam String email){
-        TokenNewPasswordDto token = resetPasswordService.createPasswordReset(email);
-        if(token == null ) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok().body(MessageResponse.builder().message("Token successful created").build());
+        // Misma respuesta exista o no el correo, para no revelar que cuentas estan registradas
+        resetPasswordService.createPasswordReset(email);
+        return ResponseEntity.ok().body(MessageResponse.builder().message("If the email is registered, a reset link has been sent").build());
     }
 
 

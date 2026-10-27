@@ -13,6 +13,7 @@ import com.andres.notes.util.PasswordValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -61,7 +62,6 @@ public class UserService {
             throw new EntityAlreadyExistsException("User already exist with email " + user.getEmail());
 
         if (!PasswordValidator.isValid(user.getPassword())) {
-            System.out.println("Password failed validation: " + user.getPassword());
             throw new IllegalArgumentException("Password does not meet security requirements.");
         }
 
@@ -88,9 +88,9 @@ public class UserService {
     public AuthResponse login(LoginDto request) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
         UserEntity user = (UserEntity) authentication.getPrincipal();
-        String token = jwtService.getToken(user);
+        if(!user.isActive()) throw new DisabledException("User isn't active");
 
-    if(!user.isActive()) throw new IllegalStateException("User isn't active");
+        String token = jwtService.getToken(user);
 
     return AuthResponse.builder()
                 .token(token)

@@ -2,11 +2,16 @@ package com.andres.notes.exceptions;
 
 
 import com.andres.notes.dto.MessageResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -58,11 +63,44 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<MessageResponse> handlerBadCredentialsException(BadCredentialsException ex){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(MessageResponse.builder()
+                        .message("Correo o contraseña incorrectos")
+                        .build());
+    }
+
+    @ExceptionHandler(DisabledException.class)
+    public ResponseEntity<MessageResponse> handlerDisabledException(DisabledException ex){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(MessageResponse.builder()
+                        .message("La cuenta no está activada. Revisa tu correo para activarla")
+                        .build());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<MessageResponse> handlerAccessDeniedException(AccessDeniedException ex){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(MessageResponse.builder()
+                        .message("No tienes permisos para realizar esta acción")
+                        .build());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<MessageResponse> handlerIllegalArgumentException(IllegalArgumentException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(MessageResponse.builder()
+                        .message(ex.getMessage())
+                        .build());
+    }
+
     @ExceptionHandler(Exception.class) // fallback para cualquier otro error
     public ResponseEntity<MessageResponse> handleGenericException(Exception ex) {
+        log.error("Unexpected error", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(MessageResponse.builder()
-                        .message("Unexpected error: " + ex.getMessage())
+                        .message("Ocurrió un error inesperado. Intenta nuevamente más tarde")
                         .build());
     }
 }

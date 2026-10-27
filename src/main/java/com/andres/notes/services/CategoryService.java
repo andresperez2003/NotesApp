@@ -33,6 +33,12 @@ public class CategoryService {
         );
     }
 
+    public CategoryEntity findCategoryByIdAndUser(Long id, String email){
+        return categoryRepository.findByIdAndUserEmail(id, email).orElseThrow(
+                ()-> new EntityNotFoundException("Category with id " + id+ " not found")
+        );
+    }
+
     public void createCategory(CategoryRequestDto category, String email){
         UserEntity user = userService.findUserByEmail(email);
         CategoryEntity newCategory = CategoryEntity.builder()

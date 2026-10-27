@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface CategoryRepository extends JpaRepository<CategoryEntity,Long> {
     boolean existsByNameAndUser(String name, UserEntity user);
     List<CategoryEntity> findByUserEmail(String email);
+    Optional<CategoryEntity> findByIdAndUserEmail(Long id, String email);
 }

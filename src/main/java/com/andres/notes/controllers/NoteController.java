@@ -52,7 +52,7 @@ public class NoteController {
 
     @PostMapping
     public ResponseEntity<MessageResponse> createNotes(@RequestBody NoteRequestDto note, Principal principal){
-        CategoryEntity category = categoryService.findCategoryById(note.getCategory());
+        CategoryEntity category = categoryService.findCategoryByIdAndUser(note.getCategory(), principal.getName());
         UserEntity user = userService.findUserByEmail(principal.getName());
         NoteEntity newNote = NoteEntity.builder().user(user).category(category).description(note.getDescription()).name(note.getName()).build();
         noteService.createNotes(newNote, principal.getName());
